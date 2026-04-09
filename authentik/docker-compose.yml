@@ -25,8 +25,8 @@ services:
       AUTHENTIK_POSTGRESQL__HOST: db
       AUTHENTIK_POSTGRESQL__NAME: authentik
       AUTHENTIK_POSTGRESQL__USER: authentik
-      AUTHENTIK_POSTGRESQL__PASSWORD_FILE: /run/secrets/pg_authentik_pass
-      AUTHENTIK_SECRET_KEY_FILE: /run/secrets/authentik_secret
+      AUTHENTIK_POSTGRESQL__PASSWORD: file:///run/secrets/pg_authentik_pass
+      AUTHENTIK_SECRET_KEY: file:///run/secrets/authentik_secret
     depends_on:
       db-setup:
         condition: service_completed_successfully
