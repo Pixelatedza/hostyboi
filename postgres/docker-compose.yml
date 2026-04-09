@@ -1,0 +1,12 @@
+services:
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+      - POSTGRES_USER=pgadmin
+    secrets:
+      - db_password
+
+secrets:
+  db_password:
+    file: ~/.secrets/postgres_root
