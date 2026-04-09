@@ -6,6 +6,12 @@ services:
       - POSTGRES_USER=pgadmin
     secrets:
       - db_password
+    networks:
+      - postgres
+
+networks:
+  postgres:
+    external: true
 
 secrets:
   db_password:
