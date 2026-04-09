@@ -4,8 +4,8 @@ services:
     container_name: traefik
     environment:
       - DO_AUTH_TOKEN_FILE=/run/secrets/do_token
-      - LOG_LEVEL=DEBUG
     command:
+      - "--log.level=DEBUG"
       - "--api.dashboard=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
