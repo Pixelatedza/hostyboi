@@ -20,13 +20,14 @@ services:
 
   # Your Authentik server
   authentik:
-    image: ghcr.io/goauthentik/server
+    image: ghcr.io/goauthentik/server:2026.2.2
     environment:
       AUTHENTIK_POSTGRESQL__HOST: db
       AUTHENTIK_POSTGRESQL__NAME: authentik
       AUTHENTIK_POSTGRESQL__USER: authentik
       AUTHENTIK_POSTGRESQL__PASSWORD: file:///run/secrets/pg_authentik_pass
       AUTHENTIK_SECRET_KEY: file:///run/secrets/authentik_secret
+    shm_size: 512mb
     depends_on:
       db-setup:
         condition: service_completed_successfully
@@ -42,6 +43,28 @@ services:
       - "traefik.http.routers.authentik.entrypoints=websecure"
       - "traefik.http.routers.authentik.tls.certresolver=le"
       - "traefik.http.services.authentik.loadbalancer.server.port=9000"
+
+  worker:
+    image: ghcr.io/goauthentik/server:latest
+    command: worker
+    user: root
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: db
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: file:///run/secrets/pg_authentik_pass
+      AUTHENTIK_SECRET_KEY: file:///run/secrets/authentik_secret
+    shm_size: 512mb
+    depends_on:
+      db-setup:
+        condition: service_completed_successfully
+    networks:
+      - postgres
+    secrets:
+      - pg_authentik_pass
+      - authentik_secret
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
   postgres:
