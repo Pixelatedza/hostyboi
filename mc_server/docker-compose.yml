@@ -1,0 +1,34 @@
+services:
+  mc:
+    image: itzg/minecraft-server
+    container_name: mc-server
+    ports:
+      - "25565:25565"
+    environment:
+      EULA: "TRUE"
+      TYPE: "VANILLA"
+      MEMORY: "12G"
+      DIFFICULTY: "hard"
+      MODE: "survival"
+      RCON_PASSWORD: "mcrcon"
+      VERSION: "LATEST"
+    volumes:
+      - /srv/storage/fast/mc/data:/data
+    restart: unless-stopped
+  backups:
+    image: itzg/mc-backup
+    container_name: mc-backups
+    environment:
+      SERVER_HOST: "mc"
+      BACKUP_METHOD: "rclone"
+      CRON_SCHEDULE: "0 4 * * *"
+      RCLONE_REMOTE: "mega"
+      RCLONE_DEST_DIR: "BUP/minecraft/world"
+      RCON_PASSWORD: "mcrcon"
+      RCLONE_BWLIMIT: "5M"
+      PRUNE_BACKUPS_DAYS: 5
+    volumes:
+        - /srv/storage/fast/mc/data:/data:ro
+        - /srv/storage/bulk/backups/minecraft/world:/backups
+        - ~/.config/rclone/rclone.conf:/config/rclone/rclone.conf:ro
+    restart: unless-stopped
