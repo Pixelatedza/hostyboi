@@ -1,0 +1,58 @@
+services:
+  db-setup:
+    image: postgres:16
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        export PGPASSWORD=$$(cat /run/secrets/pg_root_pass)
+        # Create user if missing
+        psql -h db -U root -tc "SELECT 1 FROM pg_roles WHERE rolname = 'authentik'" | grep -q 1 || \
+        psql -h db -U root -c "CREATE USER authentik WITH PASSWORD '$$(cat /run/secrets/pg_authentik_pass)';"
+        # Create DB if missing
+        psql -h db -U root -tc "SELECT 1 FROM pg_database WHERE datname = 'authentik'" | grep -q 1 || \
+        psql -h db -U root -c "CREATE DATABASE authentik OWNER authentik;"
+    secrets:
+      - pg_root_pass
+      - pg_authentik_pass
+    networks:
+      - postgres
+
+  # Your Authentik server
+  authentik:
+    image: ghcr.io/goauthentik/server
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: db
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD_FILE: /run/secrets/pg_authentik_pass
+      AUTHENTIK_SECRET_KEY_FILE: /run/secrets/authentik_secret
+    depends_on:
+      db-setup:
+        condition: service_completed_successfully
+    networks:
+      - postgres
+      - traefik
+    secrets:
+      - pg_authentik_pass
+      - authentik_secret
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.authentik.rule=Host(`auth.tisasillyplace.com`)"
+      - "traefik.http.routers.authentik.entrypoints=websecure"
+      - "traefik.http.routers.authentik.tls.certresolver=le"
+      - "traefik.http.services.authentik.loadbalancer.server.port=9000"
+
+networks:
+  postgres:
+    external: true
+  traefik:
+    external: true
+
+secrets:
+  pg_root_pass:
+    file: ~/.secrets/postgres_root
+  pg_authentik_pass:
+    file: ~/.secrets/postgres_authentik
+  authentik_secret:
+    file: ~/.secrets/authentik_secret
