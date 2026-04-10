@@ -1,0 +1,65 @@
+services:
+  db-setup-forgejo:
+    image: postgres:latest
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        export PGPASSWORD=$$(cat /run/secrets/pg_root_pass)
+        # Create user if missing
+        psql -h db -U pgadmin -tc "SELECT 1 FROM pg_roles WHERE rolname = 'forgejo'" | grep -q 1 || \
+        psql -h db -U pgadmin -c "CREATE USER forgejo WITH PASSWORD '$$(cat /run/secrets/pg_forgejo_pass)';"
+        
+        psql -h db -U pgadmin -tc "SELECT 1 FROM pg_database WHERE datname = 'forgejo'" | grep -q 1 || \
+        psql -h db -U pgadmin -c "CREATE DATABASE forgejo OWNER forgejo;"
+    secrets:
+      - pg_root_pass
+      - pg_forgejo_pass
+    networks:
+      - postgres
+
+  forgejo:
+    image: code.forgejo.org/forgejo/forgejo:latest
+    container_name: forgejo
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - FORGEJO__database__DB_TYPE=postgres
+      - FORGEJO__database__HOST=db:5432
+      - FORGEJO__database__NAME=forgejo
+      - FORGEJO__database__USER=forgejo
+      - FORGEJO__database__PASSWD_FILE=/run/secrets/pg_forgejo_pass
+      - FORGEJO__server__DOMAIN=git.tisasillyplace.com
+      - FORGEJO__server__ROOT_URL=https://git.tisasillyplace.com/
+    restart: unless-stopped
+    volumes:
+      - /srv/storage/bulk/forgejo/data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - postgres
+      - traefik
+    secrets:
+      - pg_forgejo_pass
+    depends_on:
+      db-setup-forgejo:
+        condition: service_completed_successfully
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.forgejo.rule=Host(`git.tisasillyplace.com`)"
+      - "traefik.http.routers.forgejo.entrypoints=websecure"
+      - "traefik.http.routers.forgejo.tls.certresolver=le"
+      - "traefik.http.services.forgejo.loadbalancer.server.port=3000"
+
+
+networks:
+  postgres:
+    external: true
+  traefik:
+    external: true
+
+secrets:
+  pg_root_pass:
+    file: ~/.secrets/postgres_root
+  pg_forgejo_pass:
+    file: ~/.secrets/postgres_forgejo
