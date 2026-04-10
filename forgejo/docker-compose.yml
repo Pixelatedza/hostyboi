@@ -19,7 +19,8 @@ services:
     networks:
       - postgres
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   forgejo:
     image: codeberg.org/forgejo/forgejo:14

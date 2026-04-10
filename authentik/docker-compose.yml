@@ -19,7 +19,8 @@ services:
     networks:
       - postgres
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   # Your Authentik server
   authentik:
