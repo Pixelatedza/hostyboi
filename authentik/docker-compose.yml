@@ -1,7 +1,8 @@
 services:
-  db-setup:
+  db-setup-authentik:
     image: postgres:17
     entrypoint: /bin/sh
+    container_name: db-setup-authentik
     command:
       - -c
       - |
