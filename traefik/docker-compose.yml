@@ -45,7 +45,7 @@ services:
     networks:
       - traefik
     healthcheck:
-      test: "traefik healthcheck --ping"
+      test: ['CMD', 'traefik', 'healthcheck', '--ping']
       interval: 10s
       timeout: 5s
       retries: 3
