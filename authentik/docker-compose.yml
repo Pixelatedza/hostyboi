@@ -38,7 +38,7 @@ services:
         condition: service_healthy
       traefik:
         condition: service_healthy
-      db-setup:
+      db-setup-authentik:
         condition: service_completed_successfully
     networks:
       - postgres
