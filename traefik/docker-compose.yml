@@ -13,6 +13,8 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.websecure.address=:443"
+      - "--ping"
+      - "--entrypoints.traefik.address=:8080"
       - "--api.disabledashboardad=true"
       - "--certificatesresolvers.le.acme.dnschallenge=true"
       - "--certificatesresolvers.le.acme.dnschallenge.provider=digitalocean"
@@ -29,8 +31,6 @@ services:
       - "traefik.http.routers.traefik-dash.tls.certresolver=le"
       - "traefik.http.routers.traefik-dash.service=api@internal"
       - "traefik.http.routers.traefik-dash.middlewares=authentik-auth@docker"
-      - "--ping"
-      - "--entrypoints.traefik.address=:8080"
 
       # 2. Authentik Middleware
       # Replace 'authentik-server' with the container name of your authentik server
