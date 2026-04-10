@@ -24,6 +24,7 @@ services:
       CRON_SCHEDULE: "0 4 * * *"
       RCLONE_REMOTE: "mega"
       RCLONE_DEST_DIR: "BUP/minecraft/world"
+      RCON_HOST: "mc"
       RCON_PASSWORD: "mcrcon"
       RCLONE_BWLIMIT: "5M"
       PRUNE_BACKUPS_DAYS: 5
