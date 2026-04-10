@@ -1,6 +1,6 @@
 services:
   db-setup:
-    image: postgres:latest
+    image: postgres:17
     entrypoint: /bin/sh
     command:
       - -c

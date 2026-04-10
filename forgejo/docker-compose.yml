@@ -1,6 +1,6 @@
 services:
   db-setup-forgejo:
-    image: postgres:latest
+    image: postgres:17
     entrypoint: /bin/sh
     command:
       - -c
@@ -19,7 +19,7 @@ services:
       - postgres
 
   forgejo:
-    image: code.forgejo.org/forgejo/forgejo:latest
+    image: codeberg.org/forgejo/forgejo:14
     container_name: forgejo
     environment:
       - USER_UID=1000

@@ -1,6 +1,6 @@
 services:
   traefik:
-    image: traefik:latest
+    image: traefik:3.6
     container_name: traefik
     environment:
       - DO_AUTH_TOKEN_FILE=/run/secrets/do_token
