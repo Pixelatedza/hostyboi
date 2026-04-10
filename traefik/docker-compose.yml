@@ -19,6 +19,21 @@ services:
       - "--certificatesresolvers.le.acme.storage=/acme.json"
       # Optional: custom resolvers to speed up DNS propagation checks
       - "--certificatesresolvers.le.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53"
+    labels:
+      - "traefik.enable=true"
+
+      # 1. Dashboard Router (Secure the dashboard itself)
+      - "traefik.http.routers.traefik-dash.rule=Host(`traefik.tisasillyplace.com`)"
+      - "traefik.http.routers.traefik-dash.entrypoints=websecure"
+      - "traefik.http.routers.traefik-dash.tls.certresolver=le"
+      - "traefik.http.routers.traefik-dash.service=api@internal"
+      - "traefik.http.routers.traefik-dash.middlewares=authentik-auth@docker"
+
+      # 2. Authentik Middleware
+      # Replace 'authentik-server' with the container name of your authentik server
+      - "traefik.http.middlewares.authentik-auth.forwardauth.address=http://authentik:9000/outpost.goauthentik.io/auth/traefik"
+      - "traefik.http.middlewares.authentik-auth.forwardauth.trustForwardHeader=true"
+      - "traefik.http.middlewares.authentik-auth.forwardauth.authResponseHeaders=X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid,Authorization"
     ports:
       - "80:80"
       - "443:443"
