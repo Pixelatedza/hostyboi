@@ -44,6 +44,12 @@ services:
       - ~/acme.json:/acme.json
     networks:
       - traefik
+    healthcheck:
+      test: [ "CMD", "traefik", "healthcheck" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
 networks:
   traefik:

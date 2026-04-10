@@ -17,6 +17,8 @@ services:
       - pg_authentik_pass
     networks:
       - postgres
+    depends_on:
+      - db
 
   # Your Authentik server
   authentik:
@@ -30,6 +32,10 @@ services:
       AUTHENTIK_SECRET_KEY: file:///run/secrets/authentik_secret
     shm_size: 512mb
     depends_on:
+      db:
+        condition: service_healthy
+      traefik:
+        condition: service_healthy
       db-setup:
         condition: service_completed_successfully
     networks:
@@ -45,6 +51,7 @@ services:
       - "traefik.http.routers.authentik.tls.certresolver=le"
       - "traefik.http.services.authentik.loadbalancer.server.port=9000"
 
+
   worker:
     image: ghcr.io/goauthentik/server:2026.2.2
     command: worker
@@ -57,6 +64,8 @@ services:
       AUTHENTIK_SECRET_KEY: file:///run/secrets/authentik_secret
     shm_size: 512mb
     depends_on:
+      db:
+        condition: service_healthy
       db-setup:
         condition: service_completed_successfully
     networks:

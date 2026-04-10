@@ -1,0 +1,6 @@
+include:
+  - path: postgres/docker-compose.yml
+  - path: traefik/docker-compose.yml
+  - path: authentik/docker-compose.yml
+  - path: forgejo/docker-compose.yml
+  - path: mc_server/docker-compose.yml

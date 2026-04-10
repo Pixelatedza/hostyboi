@@ -17,6 +17,8 @@ services:
       - pg_forgejo_pass
     networks:
       - postgres
+    depends_on:
+      - db
 
   forgejo:
     image: codeberg.org/forgejo/forgejo:14
@@ -42,6 +44,10 @@ services:
     secrets:
       - pg_forgejo_pass
     depends_on:
+      db:
+        condition: service_healthy
+      traefik:
+        condition: service_healthy
       db-setup-forgejo:
         condition: service_completed_successfully
     labels:
