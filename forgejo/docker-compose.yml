@@ -1,6 +1,7 @@
 services:
   db-setup-forgejo:
     image: postgres:17
+    container_name: db
     entrypoint: /bin/sh
     command:
       - -c
