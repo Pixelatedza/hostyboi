@@ -29,6 +29,7 @@ services:
       - "traefik.http.routers.traefik-dash.tls.certresolver=le"
       - "traefik.http.routers.traefik-dash.service=api@internal"
       - "traefik.http.routers.traefik-dash.middlewares=authentik-auth@docker"
+      - "--ping"
 
       # 2. Authentik Middleware
       # Replace 'authentik-server' with the container name of your authentik server
