@@ -13,6 +13,7 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.websecure.address=:443"
+      - "--api.disabledashboardad=true"
       - "--certificatesresolvers.le.acme.dnschallenge=true"
       - "--certificatesresolvers.le.acme.dnschallenge.provider=digitalocean"
       - "--certificatesresolvers.le.acme.email=your-ekpoepol@gmail.com"
