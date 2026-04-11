@@ -4,3 +4,4 @@ include:
   - path: authentik/docker-compose.yml
   - path: forgejo/docker-compose.yml
   - path: mc_server/docker-compose.yml
+  - path: mc_fabric_server/docker-compose.yml
