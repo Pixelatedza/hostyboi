@@ -13,6 +13,7 @@ services:
       RCON_PASSWORD: "mcrcon"
       VERSION: "LATEST"
       MODRINTH_PROJECTS: |
+        fabric-api
         lithium
         spark
       NETWORK_COMPRESSION_THRESHOLD: "64"
