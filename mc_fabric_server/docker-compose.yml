@@ -12,7 +12,12 @@ services:
       MODE: "survival"
       RCON_PASSWORD: "mcrcon"
       VERSION: "LATEST"
-      MODRINTH_PROJECTS: "lithium,ferrite-core,krypton,spark"
+      MODRINTH_PROJECTS: |
+        lithium
+        ferrite-core
+        krypton
+        spark
+      VERSION_FROM_MODRINTH_PROJECTS: true
       NETWORK_COMPRESSION_THRESHOLD: "64"
     volumes:
       - /srv/storage/fast/mc-fabric/data:/data
